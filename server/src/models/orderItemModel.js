@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
 
-const Cart = sequelize.define(
-  "Cart",
+const OrderItem = sequelize.define(
+  "OrderItem",
   {
     id: {
       type: DataTypes.UUID,
@@ -10,8 +10,8 @@ const Cart = sequelize.define(
       primaryKey: true,
     },
 
-    userId: {
-      type: DataTypes.INTEGER,
+    orderId: {
+      type: DataTypes.UUID,
       allowNull: false,
     },
 
@@ -26,17 +26,17 @@ const Cart = sequelize.define(
       defaultValue: 1,
     },
 
-    status: {
-      type: DataTypes.ENUM("active", "ordered"),
-      defaultValue: "active",
+    price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     }
   },
   {
-    tableName: "carts",
+    tableName: "order_items",
     timestamps: true,
     createdAt: "created_at",
-    updatedAt: "updated_at",
+    updatedAt: "updated_at"
   }
 );
 
-export default Cart;
+export default OrderItem;
