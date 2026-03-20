@@ -1,7 +1,8 @@
 import Cart from "./cartModel.js";
 import Product from "./productModel.js";
+import Wishlist from "./wishlistModel.js";
 
-// Define relations here
+// -------------------- CART RELATION --------------------
 Cart.belongsTo(Product, {
   foreignKey: "productId"
 });
@@ -10,4 +11,14 @@ Product.hasMany(Cart, {
   foreignKey: "productId"
 });
 
-export { Cart, Product };
+// -------------------- WISHLIST RELATION --------------------
+Wishlist.belongsTo(Product, {
+  foreignKey: "productId"
+});
+
+Product.hasMany(Wishlist, {
+  foreignKey: "productId"
+});
+
+// -------------------- EXPORT --------------------
+export { Cart, Product, Wishlist };

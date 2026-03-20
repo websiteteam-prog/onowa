@@ -5,6 +5,7 @@ import config from "./config/config.js"
 import authRoutes from "./module/auth/authRoutes.js"
 import productRoutes from "./module/product/productRoutes.js"
 import CartRoutes from "./module/cart/cartRoutes.js"
+import WishlistRoutes from "./module/wishlist/wishlistRoutes.js"
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes)
 app.use("/api/product", productRoutes)
 app.use("/api/cart", CartRoutes)
+app.use("/api/wishlist", WishlistRoutes)
 
 app.get('/', (req, res) => {
     res.send('onowa is live')

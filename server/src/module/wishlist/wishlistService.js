@@ -1,5 +1,4 @@
-import Wishlist from "../../models/wishlistModel.js";
-
+import { Wishlist, Product } from "../../models/index.js";
 
 export const addWishlistService = async (userId, productId) => {
 
@@ -14,31 +13,33 @@ export const addWishlistService = async (userId, productId) => {
     throw new Error("Product already in wishlist");
   }
 
-  const wishlist = await Wishlist.create({
+  return await Wishlist.create({
     userId,
     productId
   });
-
-  return wishlist;
 };
-
-
 
 export const getWishlistService = async (userId) => {
 
   return await Wishlist.findAll({
-    where: {
-      userId
-    }
+    where: { userId },
+    include: [
+      {
+        model: Product,
+        attributes: ["id", "title", "price", "image"]
+      }
+    ]
   });
-
 };
 
+export const removeWishlistService = async (userId, wishlistId) => {
 
-
-export const removeWishlistService = async (wishlistId) => {
-
-  const wishlist = await Wishlist.findByPk(wishlistId);
+  const wishlist = await Wishlist.findOne({
+    where: {
+      id: wishlistId,
+      userId // 🔥 ownership check
+    }
+  });
 
   if (!wishlist) {
     throw new Error("Wishlist item not found");

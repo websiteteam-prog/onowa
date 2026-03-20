@@ -8,7 +8,8 @@ import {
 export const addWishlistController = async (req, res) => {
   try {
 
-    const { userId, productId } = req.body;
+    const userId = req.user.id; // from token
+    const { productId } = req.body;
 
     const wishlist = await addWishlistService(userId, productId);
 
@@ -32,7 +33,9 @@ export const addWishlistController = async (req, res) => {
 export const getWishlistController = async (req, res) => {
   try {
 
-    const wishlist = await getWishlistService(req.params.userId);
+    const userId = req.user.id; // token se
+
+    const wishlist = await getWishlistService(userId);
 
     res.status(200).json({
       success: true,
@@ -53,7 +56,10 @@ export const getWishlistController = async (req, res) => {
 export const removeWishlistController = async (req, res) => {
   try {
 
-    await removeWishlistService(req.params.id);
+    const userId = req.user.id;
+    const wishlistId = req.params.id;
+
+    await removeWishlistService(userId, wishlistId);
 
     res.status(200).json({
       success: true,
