@@ -6,7 +6,6 @@ import config from "./config/config.js"
 import authRoutes from "./module/auth/authRoutes.js"
 import contactRoutes from "./module/contact/contactRoute.js"
 import uploadRoute from "./module/upload/uploadRoute.js"
-import productRoute from "./module/product/productRoute.js"
 import productRoutes from "./module/product/productRoutes.js"
 import CartRoutes from "./module/cart/cartRoutes.js"
 import WishlistRoutes from "./module/wishlist/wishlistRoutes.js"
@@ -25,7 +24,6 @@ app.use(cors({
 app.use("/api/auth", authRoutes)
 app.use("/api", contactRoutes)
 app.use("/api/upload", uploadRoute)
-app.use("/api", productRoute)
 app.use("/api/product", productRoutes)
 app.use("/api/cart", CartRoutes)
 app.use("/api/wishlist", WishlistRoutes)
