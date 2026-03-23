@@ -32,14 +32,20 @@ const User = sequelize.define("User",
             type: DataTypes.ENUM("user", "admin"),
             allowNull: false,
             defaultValue: "user"
+        },
+        resetToken: {
+            type: DataTypes.STRING
+        },
+
+        resetTokenExpiry: {
+            type: DataTypes.DATE
         }
     },
     {
-        tableName: "users",
         timestamps: true,
+        tableName: "users",
         createdAt: "created_at",
-        updatedAt: "updated_at",
-        freezeTableName: true,
+        updatedAt: "updated_at"
     }
 )
 

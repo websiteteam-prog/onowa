@@ -1,9 +1,9 @@
-import { Sequelize } from "sequelize"
-import config from "./config"
+import { Sequelize } from "sequelize";
+import config from "./config.js";
 
 const sequelize = new Sequelize(
+    config.database.name,
     config.database.user,
-    config.database.database,
     config.database.password,
     {
         host: config.database.host,
@@ -12,4 +12,4 @@ const sequelize = new Sequelize(
     }
 )
 
-export default sequelize
+export default sequelize;

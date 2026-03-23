@@ -13,6 +13,8 @@ import RefundReturnPolicy from "./pages/RefundReturnPolicy"
 // import Products from './pages/Products'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
+import Shop from "./pages/Shop";
+import Wishlist from "./pages/Wishlist";
 
 // user Authenticate Routes
 import Register from './pages/user/Register'
@@ -25,6 +27,14 @@ import AdminProtectedRoute from './components/protectedRoutes/AdminProtectedRout
 import AdminPublicRoute from './components/protectedRoutes/AdminPublicRoute'
 import AdminRegister from "./pages/admin/AdminRegister"
 import AdminLogin from "./pages/admin/AdminLogin"
+
+// user dashboard routes//
+import DashboardLayout from "./pages/userDashboard/DashboardLayout";
+import DashboardHome from "./pages/userDashboard/DashboardHome";
+import Orders from "./pages/userDashboard/Orders";
+import Profile from "./pages/userDashboard/Profile";
+// import Wishlist from "./pages/userDashboard/Wishlist";
+
 
 const App = () => {
   return (
@@ -41,6 +51,11 @@ const App = () => {
         {/* <Route path={'/products'} element={<Products />} /> */}
         <Route path={'/cart'} element={<Cart />} />
         <Route path={'/checkout'} element={<Checkout />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/contact-us" element={<Contact />} />
+
+
 
         {/* user protected routes */}
         {/* <Route path="user" element={<UserProtectedRoute />}>
@@ -50,6 +65,17 @@ const App = () => {
         <Route element={<UserPublicRoute />}>
           <Route path={'register'} element={<Register />} />
           <Route path={'login'} element={<Login />} />
+        </Route>
+
+        {/* user dsahboard protected routes */}
+
+        <Route path="/dashboard" element={<DashboardLayout />}>
+
+          <Route index element={<DashboardHome />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="profile" element={<Profile />} />
+          
+
         </Route>
 
         {/* admin protected routes */}

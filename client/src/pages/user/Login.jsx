@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  // 👁️ show hide state
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -18,9 +19,42 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", form);
+
+    try {
+
+      const res = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+
+        // token save
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        alert("Login successful");
+
+        navigate("/dashboard");
+
+      } else {
+        alert(data.message || "Login failed");
+      }
+
+    } catch (error) {
+
+      console.error(error);
+      alert("Server error");
+
+    }
+
   };
 
   return (
@@ -64,7 +98,7 @@ const Login = () => {
             <div className="relative">
 
               <input
-                type={showPassword ? "text" : "password"} // 👈 dynamic type
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
@@ -73,7 +107,6 @@ const Login = () => {
                 placeholder="Enter your password"
               />
 
-              {/* 👁️ Toggle button */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
