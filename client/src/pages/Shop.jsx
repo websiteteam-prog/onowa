@@ -7,9 +7,9 @@ function Shop() {
 
   useEffect(() => {
 
-    fetch("http://localhost:3000/api/products")
+    fetch("http://localhost:3000/api/product")
       .then(res => res.json())
-      .then(data => setProducts(data));
+      .then(data => setProducts(data.data));
 
   }, []);
 
