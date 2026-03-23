@@ -1,8 +1,15 @@
-import app from "./app"
-import config from "./config/config"
+import dotenv from "dotenv";
+dotenv.config();
+import app from "./app.js"
+import config from "./config/config.js"
+import sequelize from "./config/db.js"
 
-const PORT = config.port || 4001
+const PORT = config.port || 3000
 
-app.listen(PORT,()=>{
-    console.log(`Server is listeing at PORT localhost:${PORT}`)
+sequelize.sync().then(() => {
+    console.log("✅ Database connected")
+})
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server is listening at http://localhost:${PORT}`)
 })

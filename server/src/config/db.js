@@ -1,15 +1,15 @@
-import { Sequelize } from "sequelize"
-import config from "./config"
+import { Sequelize } from "sequelize";
+import config from "./config.js";
 
 const sequelize = new Sequelize(
-    config.database.user,
-    config.database.database,
-    config.database.password,
-    {
-        host: config.database.host,
-        dialect: config.database.dialect,
-        logging: true // production me false
-    }
-)
+  config.database.name,
+  config.database.user,
+  config.database.password,
+  {
+    host: config.database.host,
+    dialect: config.database.dialect,
+    logging: false
+  }
+);
 
-export default sequelize
+export default sequelize;

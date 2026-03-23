@@ -1,54 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "RSR04 Dynamaster Rain Suit",
-      price: 3999,
-      qty: 1,
-      image:
-        "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400",
-    },
-    {
-      id: 2,
-      name: "Motorbike Helmet Pro",
-      price: 2599,
-      qty: 1,
-      image:
-        "https://images.unsplash.com/photo-1611241893603-3c359704e0ee?w=400",
-    },
-    {
-      id: 3,
-      name: "Rider Gloves Premium",
-      price: 999,
-      qty: 2,
-      image:
-        "https://images.unsplash.com/photo-1621274147745-f8d32f90e2d6?w=400",
-    },
-  ]);
+
+  const navigate = useNavigate();
+
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(storedCart);
+
+  }, []);
+
+  const updateStorage = (items) => {
+    setCartItems(items);
+    localStorage.setItem("cart", JSON.stringify(items));
+
+    // navbar counter update
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
 
   const increase = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
-      )
+
+    const updated = cartItems.map(item =>
+      item.id === id
+        ? { ...item, qty: item.qty + 1 }
+        : item
     );
+
+    updateStorage(updated);
+
   };
 
   const decrease = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id && item.qty > 1
-          ? { ...item, qty: item.qty - 1 }
-          : item
-      )
+
+    const updated = cartItems.map(item =>
+      item.id === id && item.qty > 1
+        ? { ...item, qty: item.qty - 1 }
+        : item
     );
+
+    updateStorage(updated);
+
   };
 
   const remove = (id) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
+
+    const updated = cartItems.filter(item => item.id !== id);
+    updateStorage(updated);
+
   };
 
   const subtotal = cartItems.reduce(
@@ -61,6 +64,7 @@ const Cart = () => {
   const total = subtotal + shipping;
 
   return (
+
     <div className="bg-[#f3ede4] min-h-screen py-16">
 
       <div className="max-w-7xl mx-auto px-6">
@@ -70,18 +74,28 @@ const Cart = () => {
         </h1>
 
         {cartItems.length === 0 ? (
+
           <div className="text-center py-32 bg-white rounded-2xl shadow-sm">
+
             <h2 className="text-2xl font-semibold mb-4">
               Your cart is empty 🛒
             </h2>
+
             <p className="text-gray-500 mb-6">
               Looks like you haven't added anything yet.
             </p>
-            <button className="bg-red-500 text-white px-8 py-3 rounded-xl">
+
+            <button
+              onClick={() => navigate("/shop")}
+              className="bg-red-500 text-white px-8 py-3 rounded-xl"
+            >
               Continue Shopping
             </button>
+
           </div>
+
         ) : (
+
           <div className="grid lg:grid-cols-3 gap-10">
 
             {/* CART ITEMS */}
@@ -113,6 +127,7 @@ const Cart = () => {
                       </p>
 
                     </div>
+
                   </div>
 
                   {/* QUANTITY */}
@@ -152,6 +167,7 @@ const Cart = () => {
 
                 </div>
               ))}
+
             </div>
 
             {/* ORDER SUMMARY */}
@@ -181,18 +197,23 @@ const Cart = () => {
 
               </div>
 
-              <button className="w-full mt-8 bg-red-500 hover:bg-red-600 transition text-white py-3 rounded-xl font-medium">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="w-full mt-8 bg-red-500 hover:bg-red-600 transition text-white py-3 rounded-xl font-medium"
+              >
                 Proceed To Checkout
               </button>
 
             </div>
 
           </div>
+
         )}
 
       </div>
 
     </div>
+
   );
 };
 

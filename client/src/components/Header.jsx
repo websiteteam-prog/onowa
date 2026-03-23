@@ -1,19 +1,46 @@
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Search, ShoppingCart, User, Heart } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import Logo from "../../public/assets/logo.png"
+import { useEffect, useState } from "react";
+import Logo from "../../public/assets/logo.png";
 
 const navLinks = [
   { label: "HOME", path: "/" },
   { label: "ABOUT US", path: "/about" },
-  // { label: "INVENTORY", path: "/inventory" },
-  // { label: "BLOG", path: "/blog" },
   { label: "SHOP", path: "/shop" },
   { label: "PRODUCT", path: "/product" },
-  // { label: "PAGES", path: "/pages" },
   { label: "CONTACT", path: "/contact-us" },
 ];
- 
+
 const Header = () => {
+
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartCount(cart.length);
+  };
+
+  const updateWishlistCount = () => {
+    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setWishlistCount(wishlist.length);
+  };
+
+  useEffect(() => {
+
+    updateCartCount();
+    updateWishlistCount();
+
+    window.addEventListener("cartUpdated", updateCartCount);
+    window.addEventListener("wishlistUpdated", updateWishlistCount);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCartCount);
+      window.removeEventListener("wishlistUpdated", updateWishlistCount);
+    };
+
+  }, []);
+
   return (
     <header
       className="
@@ -65,21 +92,41 @@ const Header = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-6 text-neutral-600">
+
           <Search className="cursor-pointer hover:text-black transition" />
 
-          <div className="relative cursor-pointer">
+          {/* Wishlist */}
+          <NavLink to="/wishlist" className="relative cursor-pointer">
+
+            <Heart className="hover:text-black transition" />
+
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full text-white">
+                {wishlistCount}
+              </span>
+            )}
+
+          </NavLink>
+
+          {/* Cart */}
+          <NavLink to="/cart" className="relative cursor-pointer">
+
             <ShoppingCart className="hover:text-black transition" />
-            <span className="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full text-white">
-              0
-            </span>
-          </div>
+
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full text-white">
+                {cartCount}
+              </span>
+            )}
+
+          </NavLink>
 
           <User className="cursor-pointer hover:text-black transition" />
+
         </div>
       </div>
     </header>
   );
 };
-
 
 export default Header;

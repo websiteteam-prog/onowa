@@ -1,6 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Checkout = () => {
+
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartItems(cart);
+
+  }, []);
 
   const [user, setUser] = useState({
     name: "Ajay Kumar",
@@ -14,29 +23,13 @@ const Checkout = () => {
 
   const [newAddress, setNewAddress] = useState(user.address);
 
-  const cartItems = [
-    {
-      id: 1,
-      name: "RSR04 Dynamaster Rain Suit",
-      price: 3999,
-      qty: 1,
-      image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=200",
-    },
-    {
-      id: 2,
-      name: "Motorbike Helmet Pro",
-      price: 2599,
-      qty: 1,
-      image: "https://images.unsplash.com/photo-1611241893603-3c359704e0ee?w=200",
-    },
-  ];
-
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.qty,
     0
   );
 
-  const shipping = 120;
+  const shipping = cartItems.length ? 120 : 0;
+
   const total = subtotal + shipping;
 
   const updateAddress = () => {
@@ -45,6 +38,7 @@ const Checkout = () => {
   };
 
   return (
+
     <div className="bg-[#f3ede4] min-h-screen py-16">
 
       <div className="max-w-7xl mx-auto px-6">
@@ -99,36 +93,6 @@ const Checkout = () => {
                 <p className="text-gray-600">
                   ✉ {user.email}
                 </p>
-
-              </div>
-
-            </div>
-
-            {/* PAYMENT METHOD */}
-
-            <div className="bg-white p-8 rounded-2xl shadow-md border">
-
-              <h2 className="text-xl font-semibold mb-6">
-                Payment Method
-              </h2>
-
-              <div className="space-y-4">
-
-                <div className="flex items-center justify-between border p-4 rounded-lg">
-
-                  <span>UPI Payment</span>
-
-                  <input type="radio" checked readOnly />
-
-                </div>
-
-                <div className="flex items-center justify-between border p-4 rounded-lg">
-
-                  <span>Credit / Debit Card</span>
-
-                  <input type="radio" />
-
-                </div>
 
               </div>
 
@@ -215,50 +179,8 @@ const Checkout = () => {
 
       </div>
 
-      {/* ADDRESS MODAL */}
-
-      {showModal && (
-
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-
-          <div className="bg-white p-8 rounded-xl w-[400px]">
-
-            <h3 className="text-xl font-semibold mb-4">
-              Change Address
-            </h3>
-
-            <textarea
-              value={newAddress}
-              onChange={(e) => setNewAddress(e.target.value)}
-              className="border p-3 rounded w-full"
-              rows="4"
-            />
-
-            <div className="flex justify-end gap-4 mt-6">
-
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 border rounded"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={updateAddress}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Save
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      )}
-
     </div>
+
   );
 };
 

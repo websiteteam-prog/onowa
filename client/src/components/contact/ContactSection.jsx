@@ -1,6 +1,52 @@
 import { Phone, MapPin, Mail } from "lucide-react";
+import { useState } from "react";
 
 const ContactSection = () => {
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+
+      const res = await fetch("http://localhost:3000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+
+      alert(data.message);
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Something went wrong");
+    }
+  };
+
   return (
     <section className="bg-[#f6f2ea]">
       <div className="max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-20">
@@ -75,24 +121,45 @@ const ContactSection = () => {
             your comments, questions or concerns.
           </p>
 
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
 
+            {/* Name + Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Your Name"
                 className="w-full bg-white border border-neutral-300 rounded-xl px-6 py-4 text-sm outline-none focus:border-red-600"
               />
 
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Your Email"
                 className="w-full bg-white border border-neutral-300 rounded-xl px-6 py-4 text-sm outline-none focus:border-red-600"
               />
             </div>
 
+            {/* Phone */}
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Your Phone Number"
+              className="w-full bg-white border border-neutral-300 rounded-xl px-6 py-4 text-sm outline-none focus:border-red-600"
+            />
+
+            {/* Message */}
             <textarea
               rows={5}
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               placeholder="Your Message"
               className="w-full bg-white border border-neutral-300 rounded-xl px-6 py-4 text-sm outline-none resize-none focus:border-red-600"
             />

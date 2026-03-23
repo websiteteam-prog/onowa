@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -16,12 +18,43 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Register Data:", form);
+    try {
 
-    // yaha API call karoge
+      const res = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+
+        alert("Registration successful");
+
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+        });
+
+        navigate("/login");
+
+      } else {
+        alert(data.message || "Registration failed");
+      }
+
+    } catch (error) {
+
+      console.error(error);
+      alert("Server error");
+
+    }
   };
 
   return (
