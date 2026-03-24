@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Shop() {
 
   const [products, setProducts] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
-    fetch("http://localhost:3000/api/product")
+    fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/product`)
       .then(res => res.json())
       .then(data => setProducts(data.data));
 
+    const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setWishlist(savedWishlist);
+
   }, []);
 
+  // 🛒 ADD TO CART
   const addToCart = (product) => {
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -20,78 +28,85 @@ function Shop() {
     const exists = cart.find(item => item.id === product.id);
 
     if (exists) {
-
-      cart = cart.map(item =>
-        item.id === product.id
-          ? { ...item, qty: item.qty + 1 }
-          : item
-      );
-
-    } else {
-
-      cart.push({
-        id: product.id,
-        name: product.title,
-        price: product.price,
-        qty: 1,
-        image: product.image
-      });
-
+      toast.error("Already added to cart 🛒");
+      return;
     }
+
+    cart.push({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      qty: 1,
+      image: product.image
+    });
 
     localStorage.setItem("cart", JSON.stringify(cart));
-
-    // 🔥 Navbar update event
     window.dispatchEvent(new Event("cartUpdated"));
 
-    alert("Added to Cart");
-
+    toast.success("Added to cart ✅");
   };
 
-  const addToWishlist = (product) => {
+  // ❤️ TOGGLE WISHLIST (ADD + REMOVE 🔥)
+  const toggleWishlist = (product) => {
 
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    let updatedWishlist = [...wishlist];
 
-    const exists = wishlist.find(item => item.id === product.id);
+    const exists = updatedWishlist.find(item => item.id === product.id);
 
-    if (!exists) {
+    if (exists) {
+      // ❌ REMOVE
+      updatedWishlist = updatedWishlist.filter(item => item.id !== product.id);
 
-      wishlist.push(product);
+      setWishlist(updatedWishlist);
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
 
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+      toast("Removed from wishlist ❌");
+    } else {
+      // ✅ ADD
+      updatedWishlist.push(product);
 
-      alert("Added to Wishlist ❤️");
+      setWishlist(updatedWishlist);
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
 
+      toast.success("Added to wishlist ❤️");
     }
+  };
 
+  // ❤️ CHECK
+  const isInWishlist = (id) => {
+    return wishlist.some(item => item.id === id);
   };
 
   return (
 
-    <div className="max-w-7xl mx-auto px-6 py-10">
+    <div className="max-w-7xl mx-auto px-6 py-12">
 
-      <h2 className="text-3xl font-bold text-center mb-10">
+      <h2 className="text-3xl font-bold text-center mb-12 tracking-wide">
         Our Products
       </h2>
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 gap-10">
 
         {products.map(product => (
 
           <div
             key={product.id}
-            className="border rounded-lg shadow hover:shadow-lg transition"
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
           >
 
-            <img
-              src={product.image}
-              alt={product.title}
-              className="w-full h-56 object-cover rounded-t-lg"
-            />
+            {/* IMAGE */}
+            <div className="overflow-hidden">
+              <img
+                src={product.image}
+                alt={product.title}
+                onClick={() => navigate(`/product/${product.id}`)}
+                className="w-full h-60 object-cover cursor-pointer transform hover:scale-110 transition duration-300"
+              />
+            </div>
 
-            <div className="p-4">
+            <div className="p-5">
 
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-lg font-semibold mb-2 line-clamp-1">
                 {product.title}
               </h3>
 
@@ -99,21 +114,30 @@ function Shop() {
                 ₹ {product.price}
               </p>
 
-              <div className="flex gap-3">
+              <div className="flex justify-between items-center">
 
+                {/* CART */}
                 <button
                   onClick={() => addToCart(product)}
-                  className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
                 >
                   <ShoppingCart size={18} />
-                  Add to Cart
+                  Add
                 </button>
 
+                {/* WISHLIST */}
                 <button
-                  onClick={() => addToWishlist(product)}
-                  className="border p-2 rounded hover:bg-gray-100"
+                  onClick={() => toggleWishlist(product)}
+                  className="p-2 rounded-full hover:bg-gray-100 transition"
                 >
-                  <Heart size={18} />
+                  <Heart
+                    size={20}
+                    className={`transition ${
+                      isInWishlist(product.id)
+                        ? "fill-red-500 text-red-500 scale-110"
+                        : "text-gray-500"
+                    }`}
+                  />
                 </button>
 
               </div>
